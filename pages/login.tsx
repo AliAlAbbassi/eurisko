@@ -11,7 +11,9 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
+import { useDispatch } from "react-redux";
 import { loginMutation } from "../api/login";
+import { setAccessToken } from "../redux/user/userSlice";
 
 interface LoginWrapperProps {}
 
@@ -23,10 +25,12 @@ interface LoginWrapperProps {}
 
 export const LoginWrapper: React.FC<LoginWrapperProps> = ({}) => {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const loginApi = useMutation(loginMutation, {
     onSuccess: (data) => {
-      console.log("data", data.data.accessToken);
+      // caching in redux
+      dispatch(setAccessToken(data.data.accessToken));
       router.push("/");
     },
   });
