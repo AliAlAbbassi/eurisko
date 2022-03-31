@@ -5,10 +5,13 @@ const redis = new Redis(process.env.REDIS_URL!, {
 });
 
 export const cacheToken = async (accessToken: string) => {
-  console.log("token in cachetoken", accessToken);
   await redis.set("token", accessToken);
 };
 
 export const getToken = async () => {
   return await redis.get("token");
+};
+
+export const logout = async () => {
+  return await redis.del("token");
 };

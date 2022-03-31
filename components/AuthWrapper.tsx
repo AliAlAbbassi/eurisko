@@ -13,7 +13,6 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({}) => {
 
   if (data) {
     if (data.data != "") {
-      console.log(data.data);
       dispatch(authenticate(true));
       dispatch(setAccessToken(data.data));
     }

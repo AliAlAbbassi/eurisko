@@ -1,15 +1,18 @@
 import {
+  Box,
   Button,
   Container,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Input,
+  Spinner,
+  Text,
 } from "@chakra-ui/react";
 import { Field, Form, Formik } from "formik";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthWrapper } from "../components/AuthWrapper";
@@ -31,99 +34,130 @@ interface LoginWrapperProps {}
 
 export const LoginWrapper: React.FC<LoginWrapperProps> = ({}) => {
   const router = useRouter();
-  const dispatch = useDispatch();
-
   const isAuth = useSelector(selectisAuth);
   if (isAuth && typeof window !== "undefined") {
     router.push("/");
   }
+  const dispatch = useDispatch();
 
-  const tokenApi = useMutation(userMutation, {
-    onSuccess: (data) => {
-      dispatch(setAccessToken(data));
-    },
-    onError: (error) => {
-      console.log("token api error", error);
-    },
-  });
+  const { mutate: userMutate, isLoading: isUserLoading } = useMutation(
+    userMutation,
+    {
+      onSuccess: (data) => {
+        dispatch(setAccessToken(data));
+      },
+      onError: (error) => {
+        console.log("token api error", error);
+      },
+    }
+  );
 
-  const loginApi = useMutation(loginMutation, {
-    onSuccess: (data) => {
-      // caching in redux
-      dispatch(setAccessToken(data.data.accessToken));
-      dispatch(authenticate(true));
-      tokenApi.mutate(data.data.accessToken);
-      router.push("/");
-    },
-  });
+  const { mutate: loginMutate, isLoading: isLoginLoading } = useMutation(
+    loginMutation,
+    {
+      onSuccess: (data) => {
+        // caching in redux
+        dispatch(setAccessToken(data.data.accessToken));
+        dispatch(authenticate(true));
+        userMutate(data.data.accessToken);
+        router.push("/");
+      },
+    }
+  );
+
+  const [isRouteChanging, setIsRouteChanging] = useState(false);
+  // useEffect(() => {
+  //   router.events.on("routeChangeStart", () => setIsRouteChanging(true));
+  //   router.events.on("routeChangeComplete", () => setIsRouteChanging(false));
+  // }, [router.events]);
 
   return (
     <Container
       h={"100vh"}
       display={"flex"}
+      flexDir={"column"}
       w={"100%"}
       justifyContent={"center"}
       alignItems={"center"}
     >
       <AuthWrapper />
-      <Formik
-        initialValues={{ username: "", password: "" }}
-        onSubmit={(values, actions) => {
-          loginApi.mutate(values);
-        }}
-      >
-        {(props) => (
-          <Form>
-            <Field name="username" validate={validateName}>
-              {({ field, form }: any) => (
-                <FormControl
-                  isInvalid={form.errors.username && form.touched.username}
-                  mb={4}
-                >
-                  <FormLabel htmlFor="username" fontSize={20}>
-                    Username
-                  </FormLabel>
-                  <Input
-                    {...field}
-                    id="username"
-                    placeholder="username"
-                    fontSize={20}
-                  />
-                  <FormErrorMessage>{form.errors.username}</FormErrorMessage>
-                </FormControl>
-              )}
-            </Field>
+      <Text mb={10} fontWeight={"bold"} fontSize={"5xl"} textAlign={"center"}>
+        HOOP News
+      </Text>
+      {isRouteChanging ? (
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="blue.500"
+          size="xl"
+        />
+      ) : (
+        <Box d={"flex"} justifyContent={"center"}>
+          <Formik
+            initialValues={{ username: "", password: "" }}
+            onSubmit={(values, actions) => {
+              loginMutate(values);
+            }}
+          >
+            {(props) => (
+              <Form>
+                <Field name="username" validate={validateName}>
+                  {({ field, form }: any) => (
+                    <FormControl
+                      isInvalid={form.errors.username && form.touched.username}
+                      mb={4}
+                    >
+                      <FormLabel htmlFor="username" fontSize={20}>
+                        Username
+                      </FormLabel>
+                      <Input
+                        {...field}
+                        id="username"
+                        placeholder="username"
+                        fontSize={20}
+                      />
+                      <FormErrorMessage>
+                        {form.errors.username}
+                      </FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
 
-            <Field name="password" validate={validatePassword}>
-              {({ field, form }: any) => (
-                <FormControl
-                  isInvalid={form.errors.password && form.touched.password}
+                <Field name="password" validate={validatePassword}>
+                  {({ field, form }: any) => (
+                    <FormControl
+                      isInvalid={form.errors.password && form.touched.password}
+                    >
+                      <FormLabel htmlFor="password" fontSize={20}>
+                        Password
+                      </FormLabel>
+                      <Input
+                        {...field}
+                        id="password"
+                        placeholder="password"
+                        fontSize={20}
+                        type={"password"}
+                      />
+                      <FormErrorMessage>
+                        {form.errors.password}
+                      </FormErrorMessage>
+                    </FormControl>
+                  )}
+                </Field>
+                <Button
+                  mt={4}
+                  colorScheme="teal"
+                  isLoading={props.isSubmitting}
+                  type="submit"
                 >
-                  <FormLabel htmlFor="password" fontSize={20}>
-                    Password
-                  </FormLabel>
-                  <Input
-                    {...field}
-                    id="password"
-                    placeholder="password"
-                    fontSize={20}
-                    type={"password"}
-                  />
-                  <FormErrorMessage>{form.errors.password}</FormErrorMessage>
-                </FormControl>
-              )}
-            </Field>
-            <Button
-              mt={4}
-              colorScheme="teal"
-              isLoading={props.isSubmitting}
-              type="submit"
-            >
-              Submit
-            </Button>
-          </Form>
-        )}
-      </Formik>
+                  Submit
+                </Button>
+              </Form>
+            )}
+          </Formik>
+        </Box>
+      )}
     </Container>
   );
 };

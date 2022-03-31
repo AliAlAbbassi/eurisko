@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
 import { AuthWrapper } from "../components/AuthWrapper";
 import { store } from "../redux/store";
+import theme from "../themes";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const queryClient = new QueryClient();
@@ -11,7 +12,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <ChakraProvider>
+        <ChakraProvider theme={theme}>
           <Component {...pageProps} />
         </ChakraProvider>
       </QueryClientProvider>

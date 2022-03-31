@@ -13,3 +13,14 @@ export const userMutation = (accessToken: string) => {
     },
   });
 };
+
+export const logoutMutation = () => {
+  return axios({
+    method: "POST",
+    baseURL: "http://localhost:3000",
+    url: "/api/logout",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
