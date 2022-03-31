@@ -9,11 +9,17 @@ import {
 import { Field, Form, Formik } from "formik";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
-import { useMutation, useQueryClient } from "react-query";
-import { useDispatch } from "react-redux";
-import { loginMutation } from "../api/login";
-import { setAccessToken } from "../redux/user/userSlice";
+import React from "react";
+import { useMutation } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { AuthWrapper } from "../components/AuthWrapper";
+import { loginMutation } from "../lib/mutations/login";
+import { userMutation } from "../lib/mutations/redis";
+import {
+  authenticate,
+  selectisAuth,
+  setAccessToken,
+} from "../redux/user/userSlice";
 
 interface LoginWrapperProps {}
 
@@ -27,10 +33,26 @@ export const LoginWrapper: React.FC<LoginWrapperProps> = ({}) => {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const isAuth = useSelector(selectisAuth);
+  if (isAuth && typeof window !== "undefined") {
+    router.push("/");
+  }
+
+  const tokenApi = useMutation(userMutation, {
+    onSuccess: (data) => {
+      dispatch(setAccessToken(data));
+    },
+    onError: (error) => {
+      console.log("token api error", error);
+    },
+  });
+
   const loginApi = useMutation(loginMutation, {
     onSuccess: (data) => {
       // caching in redux
       dispatch(setAccessToken(data.data.accessToken));
+      dispatch(authenticate(true));
+      tokenApi.mutate(data.data.accessToken);
       router.push("/");
     },
   });
@@ -43,6 +65,7 @@ export const LoginWrapper: React.FC<LoginWrapperProps> = ({}) => {
       justifyContent={"center"}
       alignItems={"center"}
     >
+      <AuthWrapper />
       <Formik
         initialValues={{ username: "", password: "" }}
         onSubmit={(values, actions) => {
