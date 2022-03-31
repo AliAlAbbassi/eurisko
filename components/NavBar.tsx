@@ -25,11 +25,7 @@ import { useRouter } from "next/router";
 import { useMutation } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutMutation } from "../lib/mutations/redis";
-import {
-  authenticate,
-  selectisAuth,
-  setAccessToken,
-} from "../redux/user/userSlice";
+import { authenticate, selectisAuth } from "../redux/user/userSlice";
 
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
@@ -111,8 +107,7 @@ export default function WithSubnavigation() {
               }}
               onClick={() => {
                 logout();
-                dispatch(authenticate(false));
-                dispatch(setAccessToken(""));
+                dispatch(authenticate({ access_token: "", isAuth: false }));
               }}
             >
               Sign Out

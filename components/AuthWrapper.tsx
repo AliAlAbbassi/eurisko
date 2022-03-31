@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { userQuery } from "../lib/queries/redis";
-import { authenticate, setAccessToken } from "../redux/user/userSlice";
+import { authenticate } from "../redux/user/userSlice";
 
 interface AuthWrapperProps {}
 
@@ -13,8 +13,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({}) => {
 
   if (data) {
     if (data.data != "") {
-      dispatch(authenticate(true));
-      dispatch(setAccessToken(data.data));
+      dispatch(authenticate({ isAuth: true, access_token: "" }));
     }
   }
 

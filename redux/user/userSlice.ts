@@ -12,21 +12,23 @@ const initialState: UserState = {
   isAuth: false,
 };
 
+interface authenticateProps {
+  isAuth: boolean;
+  access_token: string;
+}
 export const userSlice = createSlice({
   name: "user",
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    setAccessToken: (state, action: PayloadAction<any>) => {
-      state.access_token = action.payload;
-    },
-    authenticate: (state, action: PayloadAction<boolean>) => {
-      state.isAuth = action.payload;
+    authenticate: (state, action: PayloadAction<authenticateProps>) => {
+      state.isAuth = action.payload.isAuth;
+      state.access_token = action.payload.access_token;
     },
   },
 });
 
-export const { setAccessToken, authenticate } = userSlice.actions;
+export const { authenticate } = userSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectAccessToken = (state: RootState) => state.user.access_token;
