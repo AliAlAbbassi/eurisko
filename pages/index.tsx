@@ -9,7 +9,7 @@ import { selectisAuth } from "../redux/user/userSlice";
 const DashboardScreen: NextPage = () => {
   const router = useRouter();
   const isAuth = useSelector(selectisAuth);
-  if (!isAuth && typeof window !== undefined) router.push("/login");
+  if (!isAuth && typeof window !== "undefined") router.push("/login");
 
   // if (!isAuth) {
   //   return (
