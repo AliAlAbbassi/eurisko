@@ -3,9 +3,11 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import ArticleList from "../components/ArticleList";
 import { AuthWrapper } from "../components/AuthWrapper";
 import NavBar from "../components/NavBar";
 import { selectisAuth } from "../redux/user/userSlice";
+import data from "../data.json";
 
 const DashboardScreen: NextPage = () => {
   const router = useRouter();
@@ -32,7 +34,7 @@ const DashboardScreen: NextPage = () => {
           size="xl"
         />
       ) : null}
-      <Box>what???</Box>
+      <ArticleList doc={data.response.docs[6]} />
     </Box>
   );
 };

@@ -16,6 +16,7 @@ interface authenticateProps {
   isAuth: boolean;
   access_token: string;
 }
+
 export const userSlice = createSlice({
   name: "user",
   // `createSlice` will infer the state type from the `initialState` argument
