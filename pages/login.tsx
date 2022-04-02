@@ -12,13 +12,12 @@ import {
 import { Field, Form, Formik } from "formik";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { AuthWrapper } from "../components/AuthWrapper";
+import { useDispatch } from "react-redux";
 import { loginMutation } from "../lib/mutations/login";
 import { userMutation } from "../lib/mutations/redis";
-import { authenticate, selectisAuth } from "../redux/user/userSlice";
+import { authenticate } from "../redux/user/userSlice";
 
 interface LoginWrapperProps {}
 
@@ -30,25 +29,13 @@ interface LoginWrapperProps {}
 
 export const LoginWrapper: React.FC<LoginWrapperProps> = ({}) => {
   const router = useRouter();
-  const isAuth = useSelector(selectisAuth);
-  if (isAuth && typeof window !== "undefined") {
-    router.push("/");
-  }
   const dispatch = useDispatch();
 
   const { mutate: userMutate, isLoading: isUserLoading } = useMutation(
     userMutation,
     {
-      onSuccess: (data) => {
-        dispatch(
-          authenticate({
-            access_token: data as unknown as string,
-            isAuth: true,
-          })
-        );
-      },
-      onError: (error) => {
-        console.log("token api error", error);
+      onError: (error: string) => {
+        console.log("redis server error", error);
       },
     }
   );
@@ -59,19 +46,25 @@ export const LoginWrapper: React.FC<LoginWrapperProps> = ({}) => {
       onSuccess: (data) => {
         // caching in redux
         dispatch(
-          authenticate({ access_token: data.data.access_token, isAuth: true })
+          authenticate({
+            access_token: data.data.accessToken,
+            isAuth: true,
+          })
         );
         userMutate(data.data.accessToken);
         router.push("/");
+      },
+      onError: (error) => {
+        console.log("login error", error);
       },
     }
   );
 
   const [isRouteChanging, setIsRouteChanging] = useState(false);
-  // useEffect(() => {
-  //   router.events.on("routeChangeStart", () => setIsRouteChanging(true));
-  //   router.events.on("routeChangeComplete", () => setIsRouteChanging(false));
-  // }, [router.events]);
+  useEffect(() => {
+    router.events.on("routeChangeStart", () => setIsRouteChanging(true));
+    router.events.on("routeChangeComplete", () => setIsRouteChanging(false));
+  });
 
   return (
     <Container
@@ -82,7 +75,6 @@ export const LoginWrapper: React.FC<LoginWrapperProps> = ({}) => {
       justifyContent={"center"}
       alignItems={"center"}
     >
-      <AuthWrapper />
       <Text mb={10} fontWeight={"bold"} fontSize={"5xl"} textAlign={"center"}>
         HOOP News
       </Text>
@@ -104,6 +96,9 @@ export const LoginWrapper: React.FC<LoginWrapperProps> = ({}) => {
           >
             {(props) => (
               <Form>
+                {/* {error.length !== 0 ? (
+                  <FormErrorMessage>{error}</FormErrorMessage>
+                ) : null} */}
                 <Field name="username" validate={validateName}>
                   {({ field, form }: any) => (
                     <FormControl

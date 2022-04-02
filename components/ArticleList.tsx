@@ -89,7 +89,7 @@ const ArticleList = ({ doc }: ArticleListProps) => {
             marginTop="5%"
           >
             <Link textDecoration="none" _hover={{ textDecoration: "none" }}>
-              {multimedia[0] ? (
+              {multimedia ? (
                 <Image
                   borderRadius="lg"
                   src={"https://static01.nyt.com/" + multimedia[0].url}

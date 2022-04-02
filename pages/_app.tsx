@@ -13,7 +13,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <ChakraProvider theme={theme}>
-          <Component {...pageProps} />
+          <AuthWrapper>
+            <Component {...pageProps} />
+          </AuthWrapper>
         </ChakraProvider>
       </QueryClientProvider>
     </Provider>

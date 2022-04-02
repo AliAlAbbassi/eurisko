@@ -9,6 +9,6 @@ export default async function handler(
     await logout();
     res.status(200);
   } catch (error) {
-    res.status(500).json({ error: error, msg: "dumb hoe" });
+    res.status(500).json({ error: error, msg: "server is down" });
   }
 }
