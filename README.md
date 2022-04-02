@@ -44,7 +44,7 @@ Caching tokens in browser local storage would be insecure and caching it in redu
 
 So, I decided to cache it in redis (a memory based database) on a separate server. The user could fetch that token whenever needed as long as it's still in cache.
 
-[redis image here]
+![](https://github.com/AliAlAbbassi/eurisko/blob/main/public/redis.png)
 
 ## Stack
 
