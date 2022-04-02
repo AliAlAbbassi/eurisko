@@ -12,17 +12,13 @@ import {
 import { Field, Form, Formik } from "formik";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useMutation } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthWrapper } from "../components/AuthWrapper";
 import { loginMutation } from "../lib/mutations/login";
 import { userMutation } from "../lib/mutations/redis";
-import {
-  authenticate,
-  selectisAuth,
-  setAccessToken,
-} from "../redux/user/userSlice";
+import { authenticate, selectisAuth } from "../redux/user/userSlice";
 
 interface LoginWrapperProps {}
 
@@ -44,7 +40,12 @@ export const LoginWrapper: React.FC<LoginWrapperProps> = ({}) => {
     userMutation,
     {
       onSuccess: (data) => {
-        dispatch(setAccessToken(data));
+        dispatch(
+          authenticate({
+            access_token: data as unknown as string,
+            isAuth: true,
+          })
+        );
       },
       onError: (error) => {
         console.log("token api error", error);
@@ -57,8 +58,9 @@ export const LoginWrapper: React.FC<LoginWrapperProps> = ({}) => {
     {
       onSuccess: (data) => {
         // caching in redux
-        dispatch(setAccessToken(data.data.accessToken));
-        dispatch(authenticate(true));
+        dispatch(
+          authenticate({ access_token: data.data.access_token, isAuth: true })
+        );
         userMutate(data.data.accessToken);
         router.push("/");
       },

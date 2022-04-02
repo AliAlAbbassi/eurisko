@@ -17,7 +17,7 @@ export const articlesSlice = createSlice({
   name: "articles",
   initialState,
   reducers: {
-    cacheDocs: (state, action: PayloadAction<UserState>) => {
+    cacheDocs: (state, action: PayloadAction<any>) => {
       state.doc = action.payload.doc;
       state.docs = action.payload.docs;
     },
