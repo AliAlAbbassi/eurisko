@@ -140,6 +140,8 @@ const DesktopNav = () => {
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
 
+  const router = useRouter();
+
   return (
     <Stack direction={"row"} spacing={4}>
       {NAV_ITEMS.map((navItem) => (
@@ -148,7 +150,7 @@ const DesktopNav = () => {
             <PopoverTrigger>
               <Link
                 p={2}
-                href={navItem.href ?? "#"}
+                onClick={() => router.push(navItem.href ?? "/")}
                 fontSize={"sm"}
                 fontWeight={500}
                 color={linkColor}
@@ -185,9 +187,10 @@ const DesktopNav = () => {
 };
 
 const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
+  const router = useRouter();
   return (
     <Link
-      href={href}
+      onClick={() => router.push("/" + href)}
       role={"group"}
       display={"block"}
       p={2}
@@ -238,12 +241,13 @@ const MobileNav = () => {
 const MobileNavItem = ({ label, children, href }: NavItem) => {
   const { isOpen, onToggle } = useDisclosure();
 
+  const router = useRouter();
   return (
     <Stack spacing={4} onClick={children && onToggle}>
       <Flex
         py={2}
         as={Link}
-        href={href ?? "#"}
+        onClick={() => router.push(href ?? "/")}
         justify={"space-between"}
         align={"center"}
         _hover={{
@@ -297,8 +301,13 @@ interface NavItem {
 
 const NAV_ITEMS: Array<NavItem> = [
   {
-    label: "Fake news",
-    subLabel: "anything you don't like is fake",
-    href: "/fakenews",
+    label: "Home",
+    subLabel: "fake news home",
+    href: "/",
+  },
+  {
+    label: "News",
+    subLabel: "fake news",
+    href: "/news",
   },
 ];

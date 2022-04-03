@@ -14,10 +14,10 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useMutation } from "react-query";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginMutation } from "../lib/mutations/login";
 import { userMutation } from "../lib/mutations/redis";
-import { authenticate } from "../redux/user/userSlice";
+import { authenticate, selectisAuth } from "../redux/user/userSlice";
 
 interface LoginWrapperProps {}
 
@@ -30,6 +30,9 @@ interface LoginWrapperProps {}
 export const LoginWrapper: React.FC<LoginWrapperProps> = ({}) => {
   const router = useRouter();
   const dispatch = useDispatch();
+
+  const isAuth = useSelector(selectisAuth);
+  if (isAuth && typeof window !== "undefined") router.push("/");
 
   const { mutate: userMutate, isLoading: isUserLoading } = useMutation(
     userMutation,

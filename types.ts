@@ -4,12 +4,13 @@ export type FieldError = {
 };
 
 export type Doc = {
+  id: string;
   abstract: string;
   web_url: string;
   snippet: string;
   lead_paragraph: string;
   source: string;
-  multimedia: [];
+  multimedia: multimedia[];
   headline: {
     main: string;
     kicker: string;
@@ -19,7 +20,7 @@ export type Doc = {
     seo: string;
     sub: string;
   };
-  keywords: [];
+  keywords: keyword[];
   pub_date: string;
   document_type: string;
   news_desk: string;
@@ -43,4 +44,29 @@ export type Doc = {
   _id: string;
   word_count: number;
   uri: string;
+};
+
+export type keyword = {
+  name: string;
+  value: string;
+  rank: number;
+  major: string;
+};
+
+export type multimedia = {
+  rank?: number;
+  subtype?: string;
+  caption?: string;
+  credit?: string;
+  type: string;
+  url: string;
+  height: number;
+  width: number;
+  legacy: {
+    widewidth: number;
+    wideheight: number;
+    wide: string;
+  };
+  subType: string;
+  crop_name: string;
 };
